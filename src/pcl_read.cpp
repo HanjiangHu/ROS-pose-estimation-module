@@ -11,13 +11,13 @@ main(int argc, char **argv)
     ros::init (argc, argv, "pcl_read");
 
     ros::NodeHandle nh;
-    ros::Publisher pcl_pub = nh.advertise<sensor_msgs::PointCloud2> ("pcl2", 1);
+    ros::Publisher pcl_pub = nh.advertise<sensor_msgs::PointCloud2> ("cup", 1);
 
     sensor_msgs::PointCloud2 output;
     pcl::PointCloud<pcl::PointXYZ> cloud;
 
-    pcl::io::loadPCDFile ("cup01234_filtered.pcd", cloud);
-    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
+    pcl::io::loadPCDFile ("/home/huhanjiang/cup01234_filtered.pcd", cloud);//cup01234_filtered.pcd/pcd/target4
+    //pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
         /*statFilter.setInputCloud(cloud.makeShared());
         statFilter.setMeanK(10);
         statFilter.setStddevMulThresh(0.2);

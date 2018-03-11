@@ -142,7 +142,7 @@ add_executable(pcl_visualize src/pcl_visualize.cpp)
 add_executable(pcl_write src/pcl_write.cpp)
  add_executable(pcl_test src/pcl_test.cpp)
 add_executable(pcl_fpfh src/pcl_fpfh.cpp)
-
+add_executable(pcl_estimation src/pcl_estimation.cpp)
 add_executable( pcl_g2o src/pcl_g2o.cpp )
 target_link_libraries( pcl_g2o 
    ${OpenCV_LIBS}
@@ -169,6 +169,7 @@ target_link_libraries(pcl_visualize ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_write ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_test ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_fpfh ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(pcl_estimation ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 #############
 ## Install ##
 #############
