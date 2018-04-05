@@ -8,26 +8,25 @@
 
 main(int argc, char **argv)
 {
-    ros::init (argc, argv, "pcl_read");
+    ros::init (argc, argv, "pcl_read2");
 
     ros::NodeHandle nh;
-    ros::Publisher pcl_pub = nh.advertise<sensor_msgs::PointCloud2> ("pcl_target", 1);
+    ros::Publisher pcl_pub = nh.advertise<sensor_msgs::PointCloud2> ("tmp", 1);
 
     sensor_msgs::PointCloud2 output;
     pcl::PointCloud<pcl::PointXYZ> cloud;
 
-    pcl::io::loadPCDFile ("/home/huhanjiang/target1.pcd", cloud);//cup01234_filtered.pcd/pcd/target4
+    pcl::io::loadPCDFile ("/home/huhanjiang/tmp.pcd", cloud);//cup01234_filtered.pcd/pcd/target4
     //pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
         /*statFilter.setInputCloud(cloud.makeShared());
         statFilter.setMeanK(10);
         statFilter.setStddevMulThresh(0.2);
-        statFilter.filter(cloud);*/
+        statFilter.filter(cloud);
 
-         /*pcl::VoxelGrid<pcl::PointXYZ> voxelSampler;
+         pcl::VoxelGrid<pcl::PointXYZ> voxelSampler;
         voxelSampler.setInputCloud(cloud.makeShared());
         voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
-        voxelSampler.filter(cloud);
-        pcl::io::savePCDFileASCII ("cup.pcd", cloud);*/
+        voxelSampler.filter(cloud);*/
 
 
    

@@ -67,11 +67,11 @@ main(int argc, char **argv)
     //pcl::PointCloud<pcl::PointXYZ> cloud_out;
 
     pcl::PointCloud<pcl::PointXYZ> cloud_aligned;
-    //pcl::PointCloud<pcl::PointXYZ> cloud_added;//用于生成数据集点云
+    pcl::PointCloud<pcl::PointXYZ> cloud_added;//用于生成数据集点云
     sensor_msgs::PointCloud2 output;
 
-    pcl::io::loadPCDFile<pcl::PointXYZ>("cup01234_filtered.pcd", *cloud_in);//基准
-    pcl::io::loadPCDFile<pcl::PointXYZ>("target4.pcd", *cloud_out);//被旋转的
+    pcl::io::loadPCDFile<pcl::PointXYZ>("/home/huhanjiang/box_new_new.pcd", *cloud_in);//基准
+    pcl::io::loadPCDFile<pcl::PointXYZ>("/home/huhanjiang/capture0003.pcd", *cloud_out);//被旋转的
 		
     clock_t start,finish;
 
@@ -83,33 +83,33 @@ main(int argc, char **argv)
     /*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
     statFilter.setInputCloud(cloud_in -> makeShared());
     statFilter.setMeanK(10);
-    statFilter.setStddevMulThresh(4);
-    statFilter.filter(*cloud_in);*/
+    statFilter.setStddevMulThresh(4);*/
+    //statFilter.filter(*cloud_in);
 
-    //statFilter.setInputCloud(cloud_out -> makeShared());
-    //statFilter.setMeanK(10);
-    //statFilter.setStddevMulThresh(0.2);
-    //statFilter.filter(*cloud_out);
+    /*statFilter.setInputCloud(cloud_out -> makeShared());
+    statFilter.setMeanK(10);
+    statFilter.setStddevMulThresh(0.2);
+    statFilter.filter(*cloud_out);*/
 
     //对被旋转的进行降低点数
-    pcl::VoxelGrid<pcl::PointXYZ> voxelSampler;
+    /*pcl::VoxelGrid<pcl::PointXYZ> voxelSampler;
     voxelSampler.setInputCloud(cloud_out -> makeShared());
     voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
-    voxelSampler.filter(*cloud_out);
+    //voxelSampler.filter(*cloud_out);
 
-    //voxelSampler.setInputCloud(cloud_in -> makeShared());
-    //voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
-    //voxelSampler.filter(*cloud_in);
+    voxelSampler.setInputCloud(cloud_in -> makeShared());
+    voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
+    //voxelSampler.filter(*cloud_in);*/
         
         
-    //cloud_added = *cloud_in;//用于生成数据集点云
-    finish = clock();
-    std::cout <<"filter: "<< float (finish-start)/CLOCKS_PER_SEC<<std::endl;
+    cloud_added = *cloud_in;//用于生成数据集点云
+    //finish = clock();
+    //std::cout <<"filter: "<< float (finish-start)/CLOCKS_PER_SEC<<std::endl;
 		
 	/**
      * fpfh粗对齐
      * */
-    start = clock();
+    /*start = clock();
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ> ());
     pcl::PointCloud<pcl::FPFHSignature33>::Ptr source_fpfh =  compute_fpfh_feature(cloud_out,tree);
     pcl::PointCloud<pcl::FPFHSignature33>::Ptr target_fpfh =  compute_fpfh_feature(cloud_in,tree);
@@ -121,31 +121,31 @@ main(int argc, char **argv)
     sac_ia.setInputTarget(cloud_in);
     sac_ia.setTargetFeatures(target_fpfh);
     
-    //sac_ia.setNumberOfSamples(6);  //设置每次迭代计算中使用的样本数量（可省）,可节省时间
-    //sac_ia.setCorrespondenceRandomness(6); //设置计算协方差时选择多少近邻点，该值越大，协防差越精确，但是计算效率越低.(可省)
+    sac_ia.setNumberOfSamples(5);  //设置每次迭代计算中使用的样本数量（可省）,可节省时间//5
+    sac_ia.setCorrespondenceRandomness(10); //设置计算协方差时选择多少近邻点，该值越大，协防差越精确，但是计算效率越低.(可省)//10
     sac_ia.align(*cloud_out); 
     std::cout << "粗对齐变换矩阵：" << std::endl << sac_ia.getFinalTransformation() << std::endl;
     //pcl::io::savePCDFileASCII ("fpfh.pcd", *cloud_out);
     finish = clock();
-    std::cout <<"fpfh: "<< float (finish-start)/CLOCKS_PER_SEC<<std::endl;
+    std::cout <<"fpfh: "<< float (finish-start)/CLOCKS_PER_SEC<<std::endl;*/
 
 
     /**
      * 非线性icp
      * */
-    start = clock();
+    /*start = clock();
     // 配准
     pcl::IterativeClosestPointNonLinear<pcl::PointXYZ, pcl::PointXYZ> reg;   // 配准对象
-    reg.setTransformationEpsilon (1e-17);   ///设置收敛判断条件，越小精度越大，收敛也越慢 
-    reg.setMaxCorrespondenceDistance (0.5);  //大于此值的点对不考虑为对应点
+    reg.setTransformationEpsilon (1e-18);   ///设置收敛判断条件，越小精度越大，收敛也越慢 
+    reg.setMaxCorrespondenceDistance (0.2);  //大于此值的点对不考虑为对应点
     
     reg.setInputSource (cloud_out -> makeShared());   // 设置源点云
     reg.setInputTarget (cloud_in -> makeShared());    // 设置目标点云
 
     Eigen::Matrix4f Ti = Eigen::Matrix4f::Identity (), prev, targetToSource;
     pcl::PointCloud<pcl::PointXYZ>::Ptr reg_result = cloud_out;
-    reg.setMaximumIterations (2000);//设置单次最大的迭代次数，停止内部迭代
-    for (int i = 0; i < 2000; ++i)   //手动迭代，改变对应点的最大值
+    reg.setMaximumIterations (20000);//设置单次最大的迭代次数，停止内部迭代
+    for (int i = 0; i < 4000; ++i)   //手动迭代，改变对应点的最大值
         {
             cloud_out = reg_result;
             reg.setInputSource (cloud_out -> makeShared());
@@ -155,7 +155,7 @@ main(int argc, char **argv)
 
             //如果变换矩阵改变量大于临界值，减小最大对应点距离重新匹配
             if (fabs ((reg.getLastIncrementalTransformation () - prev).sum ()) < reg.getTransformationEpsilon ())
-                reg.setMaxCorrespondenceDistance (reg.getMaxCorrespondenceDistance () - 0.0001);
+                reg.setMaxCorrespondenceDistance (reg.getMaxCorrespondenceDistance () - 0.00005);
             prev = reg.getLastIncrementalTransformation ();//上次的变换矩阵
         }
     //targetToSource = Ti.inverse();
@@ -163,9 +163,9 @@ main(int argc, char **argv)
     finish = clock();
     std::cout <<"icp: "<< float (finish-start)/CLOCKS_PER_SEC<<std::endl;   
 
-    std::cout << "总变换矩阵：" << std::endl << Ti * sac_ia.getFinalTransformation() << std::endl;
+    std::cout << "总变换矩阵：" << std::endl << Ti * sac_ia.getFinalTransformation() << std::endl;*/
     //cloud_added += *reg_result;//用于生成数据集点云
-    //cloud_added += *cloud_out;
+    cloud_added += *cloud_out;
 
     /*一般icp*/
 	/*pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
@@ -185,24 +185,27 @@ main(int argc, char **argv)
     //std::cout << reg_result -> points.size()<< std::endl;
         
     //对数据库里的点云进行滤波
-    /*pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
-    statFilter.setInputCloud(cloud_added.makeShared());
-    statFilter.setMeanK(10);
-    statFilter.setStddevMulThresh(2);
-    statFilter.filter(cloud_added);
-    std::cout << cloud_added.points.size()<< std::endl;
+   
 
     pcl::VoxelGrid<pcl::PointXYZ> voxelSampler;
     voxelSampler.setInputCloud(cloud_added.makeShared());
     voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
     voxelSampler.filter(cloud_added);
-    std::cout << cloud_added.points.size()<< std::endl;*/
+    std::cout << cloud_added.points.size()<< std::endl;
+
+    pcl::StatisticalOutlierRemoval<pcl::PointXYZ> statFilter;
+    statFilter.setInputCloud(cloud_added.makeShared());
+    statFilter.setMeanK(5);
+    statFilter.setStddevMulThresh(3);
+    statFilter.filter(cloud_added);
+    std::cout << cloud_added.points.size()<< std::endl;
 
     /*voxelSampler.setInputCloud(cloud_in -> makeShared());
     //voxelSampler.setLeafSize(0.01f, 0.01f, 0.01f);
     voxelSampler.filter(*cloud_in);*/
-    //pcl::toROSMsg(cloud_added, output);//用于生成数据集点云
-	pcl::toROSMsg(*reg_result, output);
+    pcl::io::savePCDFileASCII ("box_final.pcd", cloud_added);
+    pcl::toROSMsg(cloud_added, output);//用于生成数据集点云
+	//pcl::toROSMsg(*reg_result, output);
     //pcl_pub.publish(output);
     output.header.frame_id = "map";
 

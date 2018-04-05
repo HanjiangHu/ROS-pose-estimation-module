@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,6 +139,7 @@ add_executable(pcl_model_estimation src/pcl_model_estimation.cpp)
 add_executable(pcl_partitioning src/pcl_partitioning.cpp)
 add_executable(pcl_planar_segmentation src/pcl_planar_segmentation.cpp)
 add_executable(pcl_read src/pcl_read.cpp)
+add_executable(pcl_read2 src/pcl_read2.cpp)
 add_executable(pcl_visualize src/pcl_visualize.cpp)
 add_executable(pcl_write src/pcl_write.cpp)
  add_executable(pcl_test src/pcl_test.cpp)
@@ -165,6 +167,7 @@ target_link_libraries(pcl_model_estimation ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_partitioning ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_planar_segmentation ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_read ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+target_link_libraries(pcl_read2 ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_visualize ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_write ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 target_link_libraries(pcl_test ${catkin_LIBRARIES} ${PCL_LIBRARIES})
