@@ -3,6 +3,7 @@ This module is for pose estimation given the segmented point cloud of object, re
 
 ### Preparation
 Install the Point Cloud Library ([PCL](https://pointclouds.org/))
+
 `catkin_make` to compile the `pcl_test` node, using FPFH-based RANSAC and ICP algorithm based on template matching.
 
 ### How to run 
